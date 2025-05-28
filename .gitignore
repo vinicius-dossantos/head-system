@@ -1,6 +1,6 @@
 *.tfstate
 *.tfstate.*
-.terraform/
+**/.terraform/
 crash.log
 terraform.tfvars
 *.backup
