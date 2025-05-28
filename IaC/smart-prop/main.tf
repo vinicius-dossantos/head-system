@@ -245,6 +245,12 @@ output "bootstrap_brokers_tls" {
 #  }
 #}
 
+
+### GERAR A CHAVE NO TERMINAL ANTES ###
+#openssl genrsa -out smart-prop-key.pem 2048
+#chmod 400 smart-prop-key.pem
+#ssh-keygen -y -f smart-prop-key.pem > smart-prop-key.pub
+
 resource "aws_key_pair" "smart_prop_key" {
   key_name   = "smart-prop-key-pair"
   public_key = file("~/.ssh/id_rsa.pub")
@@ -252,11 +258,11 @@ resource "aws_key_pair" "smart_prop_key" {
 
 data "aws_ami" "windows" {
   most_recent = true
-  owners      = ["801119661308"] # AWS
+  owners      = ["801119661308"] # Conta oficial da Amazon
 
   filter {
     name   = "name"
-    values = ["Windows_Server-2022-English-Full-Base-*"]
+    values = ["Windows_Server-2022-English-Core-Base-*"]
   }
 
   filter {
@@ -271,6 +277,8 @@ resource "aws_instance" "windows_instance" {
   subnet_id     = aws_subnet.subnet_az1.id
   key_name      = aws_key_pair.smart_prop_key.key_name
   vpc_security_group_ids = [aws_security_group.sg.id]
+
+  associate_public_ip_address = true
 
   root_block_device {
     volume_size           = 30         # 30 GB
