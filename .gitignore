@@ -9,5 +9,3 @@ terraform.tfvars
 *.pub
 .DS_Store
 Thumbs.db
-*.env
-.env.*
