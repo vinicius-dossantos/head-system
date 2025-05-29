@@ -16,6 +16,7 @@ git config --global user.email "%git_email%"
 REM Generate SSH key (optional)
 echo Generating SSH key (if not exists)...
 IF NOT EXIST "%USERPROFILE%\.ssh\id_ed25519" (
+    mkdir %USERPROFILE%\.ssh 2>nul
     ssh-keygen -t ed25519 -C "%git_email%" -f %USERPROFILE%\.ssh\id_ed25519 -N ""
 )
 
