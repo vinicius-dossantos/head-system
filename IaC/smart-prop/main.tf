@@ -7,6 +7,8 @@ data "aws_availability_zones" "azs" {
   state = "available"
 }
 
+################# VPC / Subnets / Security Group / KMS Key #################
+
 resource "aws_vpc" "vpc" {
   cidr_block = "192.168.0.0/22"
 
@@ -86,6 +88,8 @@ resource "aws_kms_key" "kms" {
   })
 }
 
+################# Cloudwatch Logs / S3 Bucket #################
+
 resource "aws_cloudwatch_log_group" "test" {
   name = "msk_broker_logs"
     retention_in_days = 3
@@ -139,112 +143,115 @@ data "aws_iam_policy_document" "assume_role" {
 #  }
 #}
 
-resource "aws_msk_cluster" "smartprop" {
-  cluster_name           = "smartprop"
-  kafka_version          = "3.2.0"
-  number_of_broker_nodes = 3
+################# MSK Cluster #################
 
-  broker_node_group_info {
-    instance_type = "kafka.t3.small"
-    client_subnets = [
-      aws_subnet.subnet_az1.id,
-      aws_subnet.subnet_az2.id,
-      aws_subnet.subnet_az3.id,
-    ]
-    storage_info {
-      ebs_storage_info {
-        volume_size = 50 # Size in GB
-      }
-    }
-    security_groups = [aws_security_group.sg.id]
-  }
+#resource "aws_msk_cluster" "smartprop" {
+#  cluster_name           = "smartprop"
+#  kafka_version          = "3.2.0"
+#  number_of_broker_nodes = 3
 
-  encryption_info {
-    encryption_at_rest_kms_key_arn = aws_kms_key.kms.arn
-  }
-
-  open_monitoring {
-    prometheus {
-      jmx_exporter {
-        enabled_in_broker = true
-      }
-      node_exporter {
-        enabled_in_broker = true
-      }
-    }
-  }
-
-logging_info {
-  broker_logs {
-    cloudwatch_logs {
-      enabled = false
-    }
-    s3 {
-      enabled = false
-    }
-  }
-}
-
-#  logging_info {
-#    broker_logs {
-#      cloudwatch_logs {
-#        enabled   = true
-#        log_group = aws_cloudwatch_log_group.test.name
+#  broker_node_group_info {
+#    instance_type = "kafka.t3.small"
+#    client_subnets = [
+#      aws_subnet.subnet_az1.id,
+#      aws_subnet.subnet_az2.id,
+#      aws_subnet.subnet_az3.id,
+#    ]
+#    storage_info {
+#      ebs_storage_info {
+#        volume_size = 50 # Size in GB
 #      }
-#      firehose {
-#        enabled         = true
-#        delivery_stream = aws_kinesis_firehose_delivery_stream.test_stream.name
+#    }
+#    security_groups = [aws_security_group.sg.id]
+#  }
+
+#  encryption_info {
+#    encryption_at_rest_kms_key_arn = aws_kms_key.kms.arn
+#  }
+
+#  open_monitoring {
+#    prometheus {
+#      jmx_exporter {
+#        enabled_in_broker = true
 #      }
-#      s3 {
-#        enabled = true
-#        bucket  = aws_s3_bucket.bucket.id
-#        prefix  = "logs/msk-"
+#      node_exporter {
+#        enabled_in_broker = true
 #      }
 #    }
 #  }
 
-  tags = {
-    foo = "head-smart-prop"
-  }
-}
-
-output "zookeeper_connect_string" {
-  value = aws_msk_cluster.smartprop.zookeeper_connect_string
-}
-
-output "bootstrap_brokers_tls" {
-  description = "TLS connection host:port pairs"
-  value       = aws_msk_cluster.smartprop.bootstrap_brokers_tls
-}
-
-#data "aws_vpc" "vpc_sp" {
-#  filter {
-#    name   = "tag:Name"
-#    values = ["vpc-sp"]
+#logging_info {
+#  broker_logs {
+#    cloudwatch_logs {
+#      enabled = false
+#    }
+#    s3 {
+#      enabled = false
+#    }
 #  }
 #}
 
-#data "aws_subnet" "subnet_az1" {
-#  filter {
-#    name   = "tag:Name"
-#    values = ["subnet_az1"]
+##  logging_info {
+##    broker_logs {
+##      cloudwatch_logs {
+##        enabled   = true
+##        log_group = aws_cloudwatch_log_group.test.name
+##      }
+##      firehose {
+##        enabled         = true
+##        delivery_stream = aws_kinesis_firehose_delivery_stream.test_stream.name
+##      }
+##      s3 {
+##        enabled = true
+##        bucket  = aws_s3_bucket.bucket.id
+##        prefix  = "logs/msk-"
+##      }
+##    }
+##  }
+
+#  tags = {
+#    foo = "head-smart-prop"
 #  }
 #}
 
-#data "aws_subnet" "subnet_az2" {
-#  filter {
-#    name   = "tag:Name"
-#    values = ["subnet_az2"]
-#  }
+#output "zookeeper_connect_string" {
+#  value = aws_msk_cluster.smartprop.zookeeper_connect_string
 #}
 
-#data "aws_subnet" "subnet_az3" {
-#  filter {
-#    name   = "tag:Name"
-#    values = ["subnet_az3"]
-#  }
+#output "bootstrap_brokers_tls" {
+#  description = "TLS connection host:port pairs"
+#  value       = aws_msk_cluster.smartprop.bootstrap_brokers_tls
 #}
 
+##data "aws_vpc" "vpc_sp" {
+##  filter {
+##    name   = "tag:Name"
+##    values = ["vpc-sp"]
+##  }
+##}
+
+##data "aws_subnet" "subnet_az1" {
+##  filter {
+##    name   = "tag:Name"
+##    values = ["subnet_az1"]
+##  }
+##}
+
+##data "aws_subnet" "subnet_az2" {
+##  filter {
+##    name   = "tag:Name"
+##    values = ["subnet_az2"]
+##  }
+##}
+
+##data "aws_subnet" "subnet_az3" {
+##  filter {
+##    name   = "tag:Name"
+##    values = ["subnet_az3"]
+##  }
+##}
+
+################# EC2 Windows Instance #################
 
 ### GERAR A CHAVE NO TERMINAL ANTES ###
 #openssl genrsa -out smart-prop-key.pem 2048
@@ -253,16 +260,16 @@ output "bootstrap_brokers_tls" {
 
 resource "aws_key_pair" "smart_prop_key" {
   key_name   = "smart-prop-key-pair"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = file("${path.module}/smart-prop-key.pub")
 }
 
 data "aws_ami" "windows" {
   most_recent = true
-  owners      = ["801119661308"] # Conta oficial da Amazon
+  owners      = ["801119661308"]
 
   filter {
     name   = "name"
-    values = ["Windows_Server-2022-English-Core-Base-*"]
+    values = ["Windows_Server-2022-English-Full-Base-*"]
   }
 
   filter {
@@ -287,6 +294,6 @@ resource "aws_instance" "windows_instance" {
   }
 
   tags = {
-    Name = "windows-ec2-smartprop"
+    Name = "smartprop"
   }
 }
