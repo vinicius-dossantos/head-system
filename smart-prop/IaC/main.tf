@@ -247,3 +247,7 @@ resource "aws_instance" "windows_instance" {
     Name = "smartprop"
   }
 }
+
+output "ec2_instance_id" {
+  value = aws_instance.windows_instance.id
+}
