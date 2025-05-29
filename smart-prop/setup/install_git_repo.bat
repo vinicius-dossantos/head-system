@@ -2,7 +2,7 @@
 echo Installing Git for Windows...
 
 REM Download Git installer
-powershell -Command "Invoke-WebRequest -Uri 'https://github.com/git-for-windows/git/releases/latest/download/Git-2.45.1-64-bit.exe' -OutFile $env:TEMP\git-installer.exe"
+powershell -Command "Invoke-WebRequest -Uri 'https://github.com/git-for-windows/git/releases/download/v2.49.0.windows.1/Git-2.49.0-64-bit.exe' -OutFile $env:TEMP\git-installer.exe"
 
 REM Silent install
 echo Running installer...
