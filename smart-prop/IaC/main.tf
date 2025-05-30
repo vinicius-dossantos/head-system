@@ -238,7 +238,7 @@ resource "aws_instance" "windows_instance" {
   associate_public_ip_address = true
 
   root_block_device {
-    volume_size           = 30         # 30 GB
+    volume_size           = 45         # GB
     volume_type           = "gp3"
     delete_on_termination = true
   }
