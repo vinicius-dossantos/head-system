@@ -148,64 +148,80 @@ data "aws_iam_policy_document" "assume_role" {
 
 ################# MSK Cluster #################
 
-#resource "aws_msk_cluster" "smartprop" {
-#  cluster_name           = "smartprop"
-#  kafka_version          = "3.2.0"
-#  number_of_broker_nodes = 3
+resource "aws_msk_configuration" "custom_kafka_config" {
+  name           = "smartprop-kafka-config"
+  kafka_versions = ["3.2.0"]
+  server_properties = <<PROPERTIES
+    auto.create.topics.enable=true
+    delete.topic.enable=true
+    log.retention.hours=168
+    PROPERTIES
+}
 
-#  broker_node_group_info {
-#    instance_type = "kafka.t3.small"
-#    client_subnets = [
-#      aws_subnet.subnet_az1.id,
-#      aws_subnet.subnet_az2.id,
-#      aws_subnet.subnet_az3.id,
-#    ]
-#    storage_info {
-#      ebs_storage_info {
-#        volume_size = 50 # Size in GB
-#      }
-#    }
-#    security_groups = [aws_security_group.sg.id]
-#  }
+resource "aws_msk_cluster" "smartprop" {
+  cluster_name           = "smartprop"
+  kafka_version          = "3.2.0"
+  number_of_broker_nodes = 3
 
- # encryption_info {
- #   encryption_at_rest_kms_key_arn = aws_kms_key.kms.arn
- # }
+  broker_node_group_info {
+    instance_type = "kafka.t3.small"
+    client_subnets = [
+      aws_subnet.subnet_az1.id,
+      aws_subnet.subnet_az2.id,
+      aws_subnet.subnet_az3.id,
+    ]
+    storage_info {
+      ebs_storage_info {
+        volume_size = 50
+      }
+    }
+    security_groups = [aws_security_group.sg.id]
+  }
 
- # open_monitoring {
- #   prometheus {
- #     jmx_exporter {
- #       enabled_in_broker = true
- #     }
- #     node_exporter {
- #       enabled_in_broker = true
- #     }
- #   }
- # }
+  encryption_info {
+    encryption_at_rest_kms_key_arn = aws_kms_key.kms.arn
+  }
 
-#logging_info {
-#  broker_logs {
-#    cloudwatch_logs {
-#      enabled = false
-#    }
-#    s3 {
-#      enabled = false
-#    }
-#  }
-#}
-#  tags = {
-#    foo = "head-smart-prop"
-#  }
-#}
+  open_monitoring {
+    prometheus {
+      jmx_exporter {
+        enabled_in_broker = true
+      }
+      node_exporter {
+        enabled_in_broker = true
+      }
+    }
+  }
 
-#output "zookeeper_connect_string" {
-#  value = aws_msk_cluster.smartprop.zookeeper_connect_string
-#}
+  logging_info {
+    broker_logs {
+      cloudwatch_logs {
+        enabled = false
+      }
+      s3 {
+        enabled = false
+      }
+    }
+  }
 
-#output "bootstrap_brokers_tls" {
-#  description = "TLS connection host:port pairs"
-#  value       = aws_msk_cluster.smartprop.bootstrap_brokers_tls
-#}
+  configuration_info {
+    arn      = aws_msk_configuration.custom_kafka_config.arn
+    revision = aws_msk_configuration.custom_kafka_config.latest_revision
+  }
+
+  tags = {
+    foo = "head-smart-prop"
+  }
+}
+
+output "zookeeper_connect_string" {
+  value = aws_msk_cluster.smartprop.zookeeper_connect_string
+}
+
+output "bootstrap_brokers_tls" {
+  description = "TLS connection host:port pairs"
+  value       = aws_msk_cluster.smartprop.bootstrap_brokers_tls
+}
 
 
 ################# EC2 Windows Instance #################

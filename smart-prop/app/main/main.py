@@ -10,7 +10,8 @@ from profit_dll import initializeDll
 import json
 
 conf = {
-    'bootstrap.servers': 'localhost:9092'  # ou o endereço do seu broker
+    'bootstrap.servers': 'b-1.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-2.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-3.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094',
+    'security.protocol': 'PLAINTEXT' 
 }
 kafka_producer = Producer(conf)
 
