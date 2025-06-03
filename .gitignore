@@ -14,5 +14,7 @@ Thumbs.db
 *.blb
 *.ent
 *.hcl*
+*.dat*
+*.pyc*
 #*.accsd
 #*.sac
