@@ -121,11 +121,11 @@ resource "aws_kms_key" "kms" {
 
 ################# Cloudwatch Logs / S3 Bucket #################
 
-resource "aws_cloudwatch_log_group" "test" {
-  name = "msk_broker_logs"
-    retention_in_days = 3
-    kms_key_id = aws_kms_key.kms.arn
-}
+#resource "aws_cloudwatch_log_group" "test" {
+#  name = "msk_broker_logs"
+#    retention_in_days = 3
+#    kms_key_id = aws_kms_key.kms.arn
+#}
 
 resource "aws_s3_bucket" "bucket" {
   bucket = "smart-prop-msk-broker-logs"
@@ -238,7 +238,7 @@ resource "aws_instance" "windows_instance" {
   associate_public_ip_address = true
 
   root_block_device {
-    volume_size           = 30         # 30 GB
+    volume_size           = 50        # 30 GB
     volume_type           = "gp3"
     delete_on_termination = true
   }

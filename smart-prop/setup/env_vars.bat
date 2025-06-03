@@ -9,7 +9,9 @@ setx env prd /M
 setx clientName smartprop /M
 setx git_usrname "Vinicius Henrique dos Santos" /M
 setx git_email "vinicius-dossantos@outlook.com" /M
+setx git_key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINcLhugNqm7wk7ultdzvDPhpbH/C8LQAvbBnVHkLprhm" /M
+
 
 echo Variables created successfully.
-timeout /t 15 >nul
+timeout /t 5 >nul
 exit

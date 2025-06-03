@@ -121,11 +121,11 @@ resource "aws_kms_key" "kms" {
 
 ################# Cloudwatch Logs / S3 Bucket #################
 
-resource "aws_cloudwatch_log_group" "test" {
-  name = "msk_broker_logs"
-    retention_in_days = 3
-    kms_key_id = aws_kms_key.kms.arn
-}
+#resource "aws_cloudwatch_log_group" "test" {
+#  name = "msk_broker_logs"
+#    retention_in_days = 3
+#    kms_key_id = aws_kms_key.kms.arn
+#}
 
 resource "aws_s3_bucket" "bucket" {
   bucket = "smart-prop-msk-broker-logs"
@@ -242,6 +242,30 @@ resource "aws_instance" "windows_instance" {
     volume_type           = "gp3"
     delete_on_termination = true
   }
+  user_data = <<-EOF
+                  <powershell>
+                  # Cria a pasta onde os scripts serão salvos
+                  New-Item -Path "C:\\scripts" -ItemType Directory -Force
+
+                  # Função para escrever arquivos a partir de base64
+                  Function Write-From-Base64($path, $base64) {
+                    $bytes = [System.Convert]::FromBase64String($base64)
+                    [IO.File]::WriteAllBytes($path, $bytes)
+                  }
+
+                  # Escrevendo os scripts a partir dos arquivos .b64
+                  Write-From-Base64 "C:\\scripts\\env_vars.bat" "${file("../setup/env_vars.b64")}"
+                  Write-From-Base64 "C:\\scripts\\install_python.bat" "${file("../setup/install_python.b64")}"
+                  Write-From-Base64 "C:\\scripts\\install_git_repo.bat" "${file("../setup/install_git_repo.b64")}"
+                  Write-From-Base64 "C:\\scripts\\install_vscode.bat" "${file("../setup/install_vscode.b64")}"
+                  # Executa os scripts em ordem
+                  Start-Process "C:\\scripts\\env_vars.bat" -Wait
+                  Start-Process "C:\\scripts\\install_python.bat" -Wait
+                  Start-Process "C:\\scripts\\install_git_repo.bat" -Wait
+                  Start-Process "C:\\scripts\\install_vscode.bat" -Wait
+                  </powershell>
+                EOF
+
 
   tags = {
     Name = "smartprop"
