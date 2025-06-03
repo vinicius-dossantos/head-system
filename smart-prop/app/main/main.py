@@ -11,7 +11,7 @@ import json
 
 conf = {
     'bootstrap.servers': 'b-1.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-2.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-3.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094',
-    'security.protocol': 'PLAINTEXT' 
+    'security.protocol': 'SSL' 
 }
 
 kafka_producer = Producer(conf)
