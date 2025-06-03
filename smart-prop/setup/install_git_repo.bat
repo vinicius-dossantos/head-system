@@ -21,26 +21,28 @@ if not exist "%SSH_DIR%" (
     mkdir "%SSH_DIR%"
 )
 
-REM Inject known private key
-echo Writing SSH private key...
-(
-echo -----BEGIN OPENSSH PRIVATE KEY-----
-echo ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINcLhugNqm7wk7ultdzvDPhpbH/C8LQAvbBnVHkLprhm
-echo -----END OPENSSH PRIVATE KEY-----
-) > "%SSH_DIR%\id_ed25519"
+REM Write private key (overwrite on first line)
+echo -----BEGIN OPENSSH PRIVATE KEY----- > "%SSH_DIR%\id_ed25519"
+echo b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW >> "%SSH_DIR%\id_ed25519"
+echo QyNTUxOQAAACCUQbQn9b2QLNGvHBbTEwvcKhVl3Rfl6EKH86Zq/oUoiAAAAKjnMp835zKf >> "%SSH_DIR%\id_ed25519"
+echo NwAAAAtzc2gtZWQyNTUxOQAAACCUQbQn9b2QLNGvHBbTEwvcKhVl3Rfl6EKH86Zq/oUoiA >> "%SSH_DIR%\id_ed25519"
+echo AAAEAmupJye4L9sMQhXB3Fy75C8vdApJI3baMlmoj20SfPXZRBtCf1vZAs0a8cFtMTC9wq >> "%SSH_DIR%\id_ed25519"
+echo FWXdF+XoQofzpmr+hSiIAAAAHnZpbmljaXVzLWRvc3NhbnRvc0BvdXRsb29rLmNvbQECAw >> "%SSH_DIR%\id_ed25519"
+echo QFBgc= >> "%SSH_DIR%\id_ed25519"
+echo -----END OPENSSH PRIVATE KEY----- >> "%SSH_DIR%\id_ed25519"
 
-REM Inject public key
-echo Writing SSH public key...
+REM Write public key
 echo ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINcLhugNqm7wk7ultdzvDPhpbH/C8LQAvbBnVHkLprhm >> "%SSH_DIR%\id_ed25519.pub"
 
-REM Set correct permissions
-echo Fixing SSH permissions...
+REM Fix permissions
 icacls "%SSH_DIR%\id_ed25519" /inheritance:r /grant:r "%USERNAME%:R"
 icacls "%SSH_DIR%\id_ed25519.pub" /inheritance:r /grant:r "%USERNAME%:R"
 
+REM Add GitHub to known_hosts to skip fingerprint prompt
+ssh-keyscan github.com >> "%SSH_DIR%\known_hosts"
+
 REM Test connection
-echo Testing SSH connection with GitHub...
-ssh -T git@github.com
+ssh -o StrictHostKeyChecking=no -T git@github.com
 
 echo.
 echo Git and SSH setup completed.

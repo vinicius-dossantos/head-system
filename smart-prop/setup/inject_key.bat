@@ -1,0 +1,8 @@
+echo -----BEGIN OPENSSH PRIVATE KEY----- >> "%SSH_DIR%\id_ed25519"
+echo b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW >> "%SSH_DIR%\id_ed25519"
+echo QyNTUxOQAAACCUQbQn9b2QLNGvHBbTEwvcKhVl3Rfl6EKH86Zq/oUoiAAAAKjnMp835zKf >> "%SSH_DIR%\id_ed25519"
+echo NwAAAAtzc2gtZWQyNTUxOQAAACCUQbQn9b2QLNGvHBbTEwvcKhVl3Rfl6EKH86Zq/oUoiA >> "%SSH_DIR%\id_ed25519"
+echo AAAEAmupJye4L9sMQhXB3Fy75C8vdApJI3baMlmoj20SfPXZRBtCf1vZAs0a8cFtMTC9wq >> "%SSH_DIR%\id_ed25519"
+echo FWXdF+XoQofzpmr+hSiIAAAAHnZpbmljaXVzLWRvc3NhbnRvc0BvdXRsb29rLmNvbQECAw >> "%SSH_DIR%\id_ed25519"
+echo QFBgc= >> "%SSH_DIR%\id_ed25519"
+echo -----END OPENSSH PRIVATE KEY----- >> "%SSH_DIR%\id_ed25519"

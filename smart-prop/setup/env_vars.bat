@@ -13,5 +13,5 @@ setx git_key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINcLhugNqm7wk7ultdzvDPhpbH/C8L
 
 
 echo Variables created successfully.
-timeout /t 5 >nul
+timeout /t 2 >nul
 exit

@@ -148,124 +148,123 @@ data "aws_iam_policy_document" "assume_role" {
 
 ################# MSK Cluster #################
 
-resource "aws_msk_cluster" "smartprop" {
-  cluster_name           = "smartprop"
-  kafka_version          = "3.2.0"
-  number_of_broker_nodes = 3
+#resource "aws_msk_cluster" "smartprop" {
+#  cluster_name           = "smartprop"
+#  kafka_version          = "3.2.0"
+#  number_of_broker_nodes = 3
 
-  broker_node_group_info {
-    instance_type = "kafka.t3.small"
-    client_subnets = [
-      aws_subnet.subnet_az1.id,
-      aws_subnet.subnet_az2.id,
-      aws_subnet.subnet_az3.id,
-    ]
-    storage_info {
-      ebs_storage_info {
-        volume_size = 50 # Size in GB
-      }
-    }
-    security_groups = [aws_security_group.sg.id]
-  }
-
-  encryption_info {
-    encryption_at_rest_kms_key_arn = aws_kms_key.kms.arn
-  }
-
-  open_monitoring {
-    prometheus {
-      jmx_exporter {
-        enabled_in_broker = true
-      }
-      node_exporter {
-        enabled_in_broker = true
-      }
-    }
-  }
-
-logging_info {
-  broker_logs {
-    cloudwatch_logs {
-      enabled = false
-    }
-    s3 {
-      enabled = false
-    }
-  }
-}
-
-#  logging_info {
-#    broker_logs {
-#      cloudwatch_logs {
-#        enabled   = true
-#        log_group = aws_cloudwatch_log_group.test.name
-#      }
-#      firehose {
-#        enabled         = true
-#        delivery_stream = aws_kinesis_firehose_delivery_stream.test_stream.name
-#      }
-#      s3 {
-#        enabled = true
-#        bucket  = aws_s3_bucket.bucket.id
-#        prefix  = "logs/msk-"
+#  broker_node_group_info {
+#    instance_type = "kafka.t3.small"
+#    client_subnets = [
+#      aws_subnet.subnet_az1.id,
+#      aws_subnet.subnet_az2.id,
+#      aws_subnet.subnet_az3.id,
+#    ]
+#    storage_info {
+#      ebs_storage_info {
+#        volume_size = 50 # Size in GB
 #      }
 #    }
+#    security_groups = [aws_security_group.sg.id]
 #  }
 
-  tags = {
-    foo = "head-smart-prop"
-  }
-}
+ # encryption_info {
+ #   encryption_at_rest_kms_key_arn = aws_kms_key.kms.arn
+ # }
 
-output "zookeeper_connect_string" {
-  value = aws_msk_cluster.smartprop.zookeeper_connect_string
-}
+ # open_monitoring {
+ #   prometheus {
+ #     jmx_exporter {
+ #       enabled_in_broker = true
+ #     }
+ #     node_exporter {
+ #       enabled_in_broker = true
+ #     }
+ #   }
+ # }
 
-output "bootstrap_brokers_tls" {
-  description = "TLS connection host:port pairs"
-  value       = aws_msk_cluster.smartprop.bootstrap_brokers_tls
-}
+#logging_info {
+#  broker_logs {
+#    cloudwatch_logs {
+#      enabled = false
+#    }
+#    s3 {
+#      enabled = false
+#    }
+#  }
+#}
+#  tags = {
+#    foo = "head-smart-prop"
+#  }
+#}
+
+#output "zookeeper_connect_string" {
+#  value = aws_msk_cluster.smartprop.zookeeper_connect_string
+#}
+
+#output "bootstrap_brokers_tls" {
+#  description = "TLS connection host:port pairs"
+#  value       = aws_msk_cluster.smartprop.bootstrap_brokers_tls
+#}
 
 
 ################# EC2 Windows Instance #################
 
 resource "aws_instance" "windows_instance" {
-  ami                         = "ami-0d683f13af7e345f0"  # AMI do Windows Server 2022 Base de 
+  ami                         = "ami-0d683f13af7e345f0"
   instance_type               = "t3.xlarge"
   subnet_id                   = aws_subnet.subnet_az1.id
-  key_name                    = "master-smart-rsa"       
+  key_name                    = "master-smart-rsa"
   vpc_security_group_ids      = [aws_security_group.sg.id]
   associate_public_ip_address = true
 
   root_block_device {
-    volume_size           = 45         # GB
+    volume_size           = 45
     volume_type           = "gp3"
     delete_on_termination = true
   }
+
   user_data = <<-EOF
-                  <powershell>
-                  # Cria a pasta onde os scripts serão salvos
-                  New-Item -Path "C:\\scripts" -ItemType Directory -Force
+              <powershell>
+              # Create folders
+              New-Item -Path "C:\\scripts" -ItemType Directory -Force
+              New-Item -Path "$env:USERPROFILE\\.ssh" -ItemType Directory -Force
 
-                  # Função para escrever arquivos a partir de base64
-                  Function Write-From-Base64($path, $base64) {
-                    $bytes = [System.Convert]::FromBase64String($base64)
-                    [IO.File]::WriteAllBytes($path, $bytes)
-                  }
+              # Function to decode base64 and write file
+              Function Write-From-Base64($path, $base64) {
+                $bytes = [System.Convert]::FromBase64String($base64)
+                [IO.File]::WriteAllBytes($path, $bytes)
+              }
 
-                  # Escrevendo os scripts a partir dos arquivos .b64
-                  Write-From-Base64 "C:\\scripts\\env_vars.bat" "${file("../setup/env_vars.b64")}"
-                  Write-From-Base64 "C:\\scripts\\install_python.bat" "${file("../setup/install_python.b64")}"
-                  Write-From-Base64 "C:\\scripts\\install_git_repo.bat" "${file("../setup/install_git_repo.b64")}"
-                  Write-From-Base64 "C:\\scripts\\install_vscode.bat" "${file("../setup/install_vscode.b64")}"
-                  # Executa os scripts em ordem
-                  Start-Process "C:\\scripts\\env_vars.bat" -Wait
-                  Start-Process "C:\\scripts\\install_python.bat" -Wait
-                  Start-Process "C:\\scripts\\install_git_repo.bat" -Wait
-                  Start-Process "C:\\scripts\\install_vscode.bat" -Wait
-                  </powershell>
-                EOF
+              # Write .bat scripts
+              Write-From-Base64 "C:\\scripts\\env_vars.bat" "${file("../setup/env_vars.b64")}"
+              Write-From-Base64 "C:\\scripts\\install_python.bat" "${file("../setup/install_python.b64")}"
+              Write-From-Base64 "C:\\scripts\\install_git_repo.bat" "${file("../setup/install_git_repo.b64")}"
+              Write-From-Base64 "C:\\scripts\\install_vscode.bat" "${file("../setup/install_vscode.b64")}"
+              Write-From-Base64 "C:\\scripts\\git_clone.bat" "${file("../setup/git_clone.b64")}"
 
+              # Inject SSH private key
+              $sshKeyB64 = 'PASTE_AQUI_A_LINHA_BASE64_DA_CHAVE_PRIVADA'
+              Write-From-Base64 "$env:USERPROFILE\\.ssh\\id_ed25519" $sshKeyB64
+
+              # Inject SSH public key (exemplo direto)
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINcLhugNqm7wk7ultdzvDPhpbH/C8LQAvbBnVHkLprhm" | Out-File "$env:USERPROFILE\\.ssh\\id_ed25519.pub" -Encoding ascii
+
+              # Fix permissions (opcional, Windows não bloqueia sem chmod)
+              icacls "$env:USERPROFILE\\.ssh\\id_ed25519" /inheritance:r /grant:r "$env:USERNAME:R"
+              icacls "$env:USERPROFILE\\.ssh\\id_ed25519.pub" /inheritance:r /grant:r "$env:USERNAME:R"
+
+              # Add GitHub to known_hosts
+              ssh-keyscan github.com >> "$env:USERPROFILE\\.ssh\\known_hosts"
+
+              # Execute scripts in order
+              Start-Process "C:\\scripts\\env_vars.bat" -Wait
+              Start-Process "C:\\scripts\\install_python.bat" -Wait
+              Start-Process "C:\\scripts\\install_git_repo.bat" -Wait
+              Start-Process "C:\\scripts\\install_vscode.bat" -Wait
+              Start-Process "C:\\scripts\\git_clone.bat" -Wait
+              </powershell>
+              EOF
 
   tags = {
     Name = "smartprop"
