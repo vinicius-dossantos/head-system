@@ -3,60 +3,31 @@ from ctypes import byref, c_wchar_p, c_double, c_int
 from profitTypes import *
 from profit_dll import initializeDll
 from datetime import datetime
+from pyspark.sql import SparkSession
+import os
 
+jars_path = r"C:\headsystem\head-system\smart-prop\app\jars"
+jars_list = ";".join([os.path.join(jars_path, f) for f in os.listdir(jars_path) if f.endswith(".jar")])
 
-class ProfitOrderSender:
-    def __init__(self, dll_path, key="1747419014493122621", user="renan@mesasmartprop.com.br", password="SmartProp2024@"):
-        self.dll = initializeDll(dll_path)
-        self._key = key
-        self._user = user
-        self._password = password
-        self._connect()
+spark = SparkSession.builder \
+    .appName("smartPropGetOrders") \
+    .config("spark.jars", jars_list) \
+    .getOrCreate()
 
-    def _connect(self):
-        result = self.dll.DLLInitializeLogin(
-            c_wchar_p(self._key),
-            c_wchar_p(self._user),
-            c_wchar_p(self._password),
-            None, None, None, None,
-            None, None, None,
-            None, None, None, None
-        )
-        print(f"DLLInitialize: {result}")
+df_kafka = spark.readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "b-1.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-2.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-3.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094") \
+    .option("subscribe", "entryorders") \
+    .option("startingOffsets", "latest") \
+    .option("kafka.security.protocol", "SSL") \
+    .load()
 
-    def send_market_order(self, broker_id, account_id, sub_account_id, rot_password,
-                          ticker, exchange, amount, side="buy"):
-        order_type = TConnectorOrderType.Market.value
-        order_side = TConnectorOrderSide.Buy.value if side == "buy" else TConnectorOrderSide.Sell.value
+df_values = df_kafka.selectExpr("CAST(value AS STRING) as message")
 
-        send_order = TConnectorSendOrder(
-            Version=0,
-            Password=rot_password,
-            OrderType=order_type,
-            OrderSide=order_side,
-            Price=-1,
-            StopPrice=-1,
-            Quantity=amount
-        )
+query = df_values.writeStream \
+    .outputMode("append") \
+    .format("console") \
+    .option("truncate", False) \
+    .start()
 
-        send_order.AccountID = TConnectorAccountIdentifier(
-            Version=0,
-            BrokerID=broker_id,
-            AccountID=account_id,
-            SubAccountID=sub_account_id,
-            Reserved=0
-        )
-
-        send_order.AssetID = TConnectorAssetIdentifier(
-            Version=0,
-            Ticker=ticker,
-            Exchange=exchange,
-            FeedType=0
-        )
-
-        result = self.dll.SendOrder(byref(send_order))
-
-        if result < 0:
-            print(f"Erro ao enviar ordem. Código: {result}")
-        else:
-            print(f"Ordem enviada com sucesso. ProfitID: {result}")
+query.awaitTermination()
