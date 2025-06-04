@@ -17,7 +17,7 @@ conf = {
 kafka_producer = Producer(conf)
 
 #profit_dll = initializeDll(r"C:\Users\vinic\OneDrive\Documentos\GitHub\smart-prop-ORH\doc\ProfitDLL\DLLs\Win64\ProfitDLL.dll")
-profit_dll = initializeDll(r"\\tsclient\smart-prop\app\dll\Win64sProfitDLL.dll")
+profit_dll = initializeDll(r"C:\headsystem\head-system\smart-prop\app\dll\Win64\ProfitDLL.dll")
 
 # Error Codes
 NL_OK                    = 0x00000000
