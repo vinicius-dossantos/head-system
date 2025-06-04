@@ -10,11 +10,12 @@ from profit_dll import initializeDll
 import json
 
 conf = {
-    'bootstrap.servers': 'localhost:9092'  # ou o endereço do seu broker
+    'bootstrap.servers': 'b-1.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-2.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-3.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094',
+    'security.protocol': 'SSL' 
 }
 kafka_producer = Producer(conf)
 
-profit_dll = initializeDll(r"C:\Users\vinic\OneDrive\Documentos\GitHub\smart-prop-ORH\doc\ProfitDLL\DLLs\Win64\ProfitDLL.dll")
+profit_dll = initializeDll(r"C:\headsystem\head-system\smart-prop\app\dll\Win64\ProfitDLL.dll")
 
 # Error Codes
 NL_OK                    = 0x00000000
