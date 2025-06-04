@@ -12,6 +12,8 @@ jars_list = ",".join([os.path.join(jars_path, f) for f in os.listdir(jars_path) 
 spark = SparkSession.builder \
     .appName("smartPropGetOrders") \
     .config("spark.jars", jars_list) \
+    .config("spark.hadoop.hadoop.security.logger", "INFO,NullAppender") \
+    .config("spark.hadoop.io.native.lib.available", "false") \
     .getOrCreate()
 
 df_kafka = spark.readStream \
