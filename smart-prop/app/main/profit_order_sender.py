@@ -7,7 +7,7 @@ from pyspark.sql import SparkSession
 import os
 
 jars_path = r"C:\headsystem\head-system\smart-prop\app\jars"
-jars_list = ";".join([os.path.join(jars_path, f) for f in os.listdir(jars_path) if f.endswith(".jar")])
+jars_list = ",".join([os.path.join(jars_path, f) for f in os.listdir(jars_path) if f.endswith(".jar")])
 
 spark = SparkSession.builder \
     .appName("smartPropGetOrders") \
