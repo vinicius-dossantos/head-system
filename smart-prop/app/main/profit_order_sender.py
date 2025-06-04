@@ -6,6 +6,9 @@ from datetime import datetime
 from pyspark.sql import SparkSession
 import os
 
+os.environ["PYSPARK_PYTHON"] = "C:/Program Files/Python310/python.exe"
+os.environ["PYSPARK_DRIVER_PYTHON"] = "C:/Program Files/Python310/python.exe"
+
 # Caminho dos JARs
 jars_path = r"C:\headsystem\head-system\smart-prop\app\jars"
 jars_list = ",".join([os.path.join(jars_path, f) for f in os.listdir(jars_path) if f.endswith(".jar")])
