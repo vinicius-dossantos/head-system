@@ -273,7 +273,7 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
         
     ))
 
-    #subcontas_permitidas = {"104", "142", "151", "144"}
+    #subcontas_permitidas = {"125", "144", "142", "124", "117", "151", "145", "150", "121", "131", "20", "130"}
     subcontas_permitidas = {"125", "144", "142", "124", "117", "151"}
     tz_brasilia = ZoneInfo("America/Sao_Paulo")
     dt_raw = system_time_to_datetime(order.CloseDate)
