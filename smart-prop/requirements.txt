@@ -1,3 +1,4 @@
 confluent_kafka>=2.3.0
 pyspark==3.5.1
 kafka-python==2.0.2
+tzdata

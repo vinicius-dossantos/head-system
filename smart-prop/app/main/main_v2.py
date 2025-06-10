@@ -4,18 +4,19 @@ from getpass import getpass
 from ctypes import *
 import struct
 from datetime import *
-from confluent_kafka import Producer
+#from confluent_kafka import Producer
 from profitTypes import *
 from profit_dll import initializeDll
 #from f_compra_venda import sendBuyMarketOrder
 import json
+from zoneinfo import ZoneInfo
 
-conf = {
-    'bootstrap.servers': 'b-1.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-2.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-3.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094',
-    'security.protocol': 'SSL' 
-}
+#conf = {
+#    'bootstrap.servers': 'b-1.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-2.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-3.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094',
+#    'security.protocol': 'SSL' 
+#}
 
-kafka_producer = Producer(conf)
+#kafka_producer = Producer(conf)
 
 #profit_dll = initializeDll(r"C:\Users\vinic\OneDrive\Documentos\GitHub\smart-prop-ORH\doc\ProfitDLL\DLLs\Win64\ProfitDLL.dll")
 profit_dll = initializeDll(r"C:\headsystem\head-system\smart-prop\app\dll\Win64\ProfitDLL.dll")
@@ -248,7 +249,9 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
     dt_criacao_str = dt_criacao_str.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] if dt_criacao_str else None
     dt_execucao_str = dt_execucao_str.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] if dt_execucao_str else None
 
-    # Imprime no terminal
+
+    
+    subconta = str(order.AccountID.SubAccountID).strip()
     print('{0} ; {1} ; {2} ; {3} ; {4} ; {5} ; {6} ; {7} ; {8} ; {9} ; {10} ; {11} ; {12} ; {13} ; {14}'.format(
         
         9999, #Esse campo serve para indicar para a aplicação um log válido de ordem
@@ -270,16 +273,33 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
         
     ))
 
-    print(" ------------------------------------------------------------------------------------------------------------------------------------ ")
+    #subcontas_permitidas = {"104", "142", "151", "144"}
+    subcontas_permitidas = {"125", "144", "142", "124", "117", "151"}
+    tz_brasilia = ZoneInfo("America/Sao_Paulo")
+    dt_raw = system_time_to_datetime(order.CloseDate)
+    dh_execucao_ordem = (dt_raw.astimezone(tz_brasilia) if dt_raw.tzinfo else dt_raw.replace(tzinfo=tz_brasilia)).replace(microsecond=0)
+    dh_atual = datetime.now(tz=tz_brasilia).replace(microsecond=0)
+    dh_janela_execucao = (dh_atual - timedelta(minutes=5)).replace(microsecond=0)
+    
+    # Debug de datas
+    #print(f"🕒 dh_janela_execucao: {dh_janela_execucao}")
+    #print(f"🕒 dh_execucao_ordem: {dh_execucao_ordem}")
+    #print(f"🕒 dh_atual: {dh_atual}")
+    #print("🧪 Tipo dh_execucao_ordem:", type(dh_execucao_ordem))
+    #print("🧪 Tipo dh_janela_execucao:", type(dh_janela_execucao))
+    #print("🧪 Tipo dh_atual:", type(dh_atual))
 
-    if order.AccountID.SubAccountID.strip() in ("9" , "122"):  
-        if order_status_str == "Filled":
-            if order.OrderSide == 2:
-                print("Enviando venda")
-                sendBuyMarketOrder(order.AssetID.Ticker.strip(), order.TradedQuantity)
-            elif order.OrderSide == 1:
-                print("Enviando venda")
-                sendSellMarketOrder(order.AssetID.Ticker.strip(), order.TradedQuantity)
+
+    if dh_janela_execucao <= dh_execucao_ordem <= dh_atual:
+        if subconta in subcontas_permitidas:
+            if order_status_str == "Filled":
+                if order.OrderSide == 2:
+                    print(f"🚀 Enviando COMPRA de {order.TradedQuantity}")
+                    sendBuyMarketOrder(order.AssetID.Ticker.strip(), order.TradedQuantity)
+                elif order.OrderSide == 1:
+                    print(f"🚀 Enviando VENDA de {order.TradedQuantity}")
+                    sendSellMarketOrder(order.AssetID.Ticker.strip(), order.TradedQuantity)
+    print(" ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ")
 
     kafka_received_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
