@@ -273,8 +273,7 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
         
     ))
 
-    subcontas_permitidas = {"125", "144", "142", "124", "117", "151", "145", "150", "121", "131", "20", "130"}
-    #subcontas_permitidas = {"125", "144", "142", "124", "117", "151"}
+    subcontas_permitidas = {"6", "85", "90", "117", "121", "122", "124", "125", "126", "128", "129", "132", "133", "136", "137", "140", "142", "144", "145", "147", "148", "150", "152", "153", "155"}
     tz_brasilia = ZoneInfo("America/Sao_Paulo")
     dt_raw = system_time_to_datetime(order.CloseDate)
     dh_execucao_ordem = (dt_raw.astimezone(tz_brasilia) if dt_raw.tzinfo else dt_raw.replace(tzinfo=tz_brasilia)).replace(microsecond=0)
