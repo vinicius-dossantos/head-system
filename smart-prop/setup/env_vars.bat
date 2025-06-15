@@ -1,6 +1,13 @@
 @echo off
 echo Setting environment variables...
 
+REM === Variáveis específicas da aplicação ===
+setx key 1747419014493122621 /M
+setx user renan@mesasmartprop.com.br /M
+setx password Mic@123456 /M
+setx accountId 1358568 /M
+setx brokerId 513 /M
+
 REM === Securely set system-wide environment variables ===
 setx key 1747419014493122621 /M
 setx user renan@mesasmartprop.com.br /M
