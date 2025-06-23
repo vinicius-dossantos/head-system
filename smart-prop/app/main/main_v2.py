@@ -294,11 +294,11 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
         if subconta in subcontas_permitidas:
             if order_status_str == "Filled":
                 if order.OrderSide == 2:
-                    print(f"🚀 Enviando COMPRA de {order.TradedQuantity}")
-                    sendBuyMarketOrder(order.AssetID.Ticker.strip(), order.TradedQuantity)
+                    print(f"🚀 Enviando COMPRA de {(order.TradedQuantity * 2)}")
+                    sendBuyMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * 2))
                 elif order.OrderSide == 1:
-                    print(f"🚀 Enviando VENDA de {order.TradedQuantity}")
-                    sendSellMarketOrder(order.AssetID.Ticker.strip(), order.TradedQuantity)
+                    print(f"🚀 Enviando VENDA de {(order.TradedQuantity * 2)}")
+                    sendSellMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * 2))
     print(" ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ")
 
     kafka_received_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
