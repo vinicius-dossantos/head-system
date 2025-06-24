@@ -19,3 +19,5 @@ Thumbs.db
 #*.accsd
 #*.sac
 *.dat*
+*.accesd*
+*broker*
