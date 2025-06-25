@@ -18,7 +18,7 @@ from zoneinfo import ZoneInfo
 
 #kafka_producer = Producer(conf)
 
-#profit_dll = initializeDll(r"C:\Users\vinic\OneDrive\Documentos\GitHub\smart-prop-ORH\doc\ProfitDLL\DLLs\Win64\ProfitDLL.dll")
+multiplicador = 3
 profit_dll = initializeDll(r"C:\headsystem\head-system\smart-prop\app\dll\Win64\ProfitDLL.dll")
 
 # Error Codes
@@ -294,8 +294,8 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
         if subconta in subcontas_permitidas:
             if order_status_str == "Filled":
                 if order.OrderSide == 2:
-                    print(f"🚀 Enviando COMPRA de {(order.TradedQuantity * 2)}")
-                    sendBuyMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * 2))
+                    print(f"🚀 Enviando COMPRA de {(order.TradedQuantity * multiplicador)}")
+                    sendBuyMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * multiplicador))
                 elif order.OrderSide == 1:
                     print(f"🚀 Enviando VENDA de {(order.TradedQuantity * 2)}")
                     sendSellMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * 2))
