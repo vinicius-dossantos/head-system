@@ -11,15 +11,9 @@ from profit_dll import initializeDll
 import json
 from zoneinfo import ZoneInfo
 
-#conf = {
-#    'bootstrap.servers': 'b-1.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-2.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094,b-3.smartprop.j12dbs.c4.kafka.sa-east-1.amazonaws.com:9094',
-#    'security.protocol': 'SSL' 
-#}
+multiplicador = 1
 
-#kafka_producer = Producer(conf)
-
-#profit_dll = initializeDll(r"C:\Users\vinic\OneDrive\Documentos\GitHub\smart-prop-ORH\doc\ProfitDLL\DLLs\Win64\ProfitDLL.dll")
-profit_dll = initializeDll(r"C:\headsystem\head-system\smart-prop\app\dll\Win64\ProfitDLL.dll")
+profit_dll = initializeDll(r"C:\headsystem\head-system\euro\app\dll\Win64\ProfitDLL.dll")
 
 # Error Codes
 NL_OK                    = 0x00000000
@@ -294,8 +288,8 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
         if subconta in subcontas_permitidas:
             if order_status_str == "Filled":
                 if order.OrderSide == 2:
-                    print(f"🚀 Enviando COMPRA de {(order.TradedQuantity * 2)}")
-                    sendBuyMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * 2))
+                    print(f"🚀 Enviando COMPRA de {(order.TradedQuantity * multiplicador)}")
+                    sendBuyMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * multiplicador))
                 elif order.OrderSide == 1:
                     print(f"🚀 Enviando VENDA de {(order.TradedQuantity * 2)}")
                     sendSellMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * 2))
@@ -663,7 +657,7 @@ def doZeroPosition():
     
     print("ZeroOrderID: {0}".format(ret))
 
-def dllStart(key="1747419014493122621", user="renan@mesasmartprop.com.br", password="SmartProp2024@"):
+def dllStart(key="14718386451779203944", user="18638492000100", password="EuroDLL@2025"):
     try:
         #key = input("Chave de acesso: ")
         #user = input("Usuário: ") # preencher com usuário da conta (email ou documento)
@@ -784,9 +778,9 @@ def sellStopOrder():
 
 def sendBuyMarketOrder(ticker, quantity):
     
-    key = "1747419014493122621"
-    user = "renan@mesasmartprop.com.br"
-    password ="SmartProp2024@"
+    key = "14718386451779203944"
+    user = "18638492000100"
+    password ="EuroDLL@2025"
 
     #profit_dll.DLLInitializeLogin(c_wchar_p(key), c_wchar_p(user), c_wchar_p(password), stateCallback, None, None, accountCallback,
     #                                          newTradeCallback, newDailyCallback, priceBookCallback,
@@ -799,9 +793,9 @@ def sendBuyMarketOrder(ticker, quantity):
     print(" ===[ENVIO ORDEM]=== ")
 
     brokerId = 513
-    accountId = "1358568"
+    accountId = "102383173"
     subAccountId = "9"
-    rotPassword = "Mic@123456"
+    rotPassword = "EuroDLL@2025"
     #Mic@123456 Mic@123456
 
     ticker = ticker
@@ -839,8 +833,8 @@ def sendBuyMarketOrder(ticker, quantity):
 def sendSellMarketOrder(ticker, quantity):
 
     key = "1747419014493122621"
-    user = "renan@mesasmartprop.com.br"
-    password ="SmartProp2024@"
+    user = "18638492000100"
+    password ="14718386451779203944"
 
     #profit_dll.DLLInitializeLogin(c_wchar_p(key), c_wchar_p(user), c_wchar_p(password), stateCallback, None, None, accountCallback,
     #                                          newTradeCallback, newDailyCallback, priceBookCallback,
@@ -849,9 +843,9 @@ def sendSellMarketOrder(ticker, quantity):
     #                                             None, newHistoryCallback, progressCallBack, newTinyBookCallBack)
 
     brokerId = 513
-    accountId = "1358568"
+    accountId = "102383173"
     #subAccountId = "9"
-    rotPassword = "Mic@123456"
+    rotPassword = "EuroDLL@2025"
 
     ticker = ticker
     exchange = "F"
