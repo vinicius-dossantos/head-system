@@ -18,7 +18,7 @@ from zoneinfo import ZoneInfo
 
 #kafka_producer = Producer(conf)
 
-multiplicador = 4
+multiplicador = 3
 profit_dll = initializeDll(r"C:\headsystem\head-system\smart-prop\app\dll\Win64\ProfitDLL.dll")
 
 # Error Codes
@@ -273,7 +273,7 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
         
     ))
 
-    subcontas_permitidas = {"170","159","5"} 
+    subcontas_permitidas = {"20","117","144","147","153","156","157","159","160","162","164","165"} 
     #subcontas_permitidas = {"6", "85", "90", "117", "121", "122", "124", "125", "126", "128", "129", "132", "133", "136", "137", "140", "142", "144", "145", "147", "148", "150", "152", "153", "155"}
     tz_brasilia = ZoneInfo("America/Sao_Paulo")
     dt_raw = system_time_to_datetime(order.CloseDate)
