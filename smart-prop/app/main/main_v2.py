@@ -18,7 +18,7 @@ from zoneinfo import ZoneInfo
 
 #kafka_producer = Producer(conf)
 
-multiplicador = 3
+multiplicador = 4
 profit_dll = initializeDll(r"C:\headsystem\head-system\smart-prop\app\dll\Win64\ProfitDLL.dll")
 
 # Error Codes
