@@ -12,7 +12,7 @@ import json
 
 from zoneinfo import ZoneInfo
 
-multiplicador = 4
+multiplicador = 5
 senha_envio = "Anaclara@1972"
 senha_login = "EuroDLL@2025"
 
