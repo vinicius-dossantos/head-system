@@ -11,7 +11,9 @@ from profit_dll import initializeDll
 import json
 from zoneinfo import ZoneInfo
 
-multiplicador = 1
+multiplicador = 4
+senha_envio = "Anaclara@1972"
+senha_login = "EuroDLL@2025"
 
 #profit_dll = initializeDll(r"C:\headsystem\head-system\euro\app\dll\Win64\ProfitDLL.dll")
 profit_dll = initializeDll(r"C:\head-system\euro\app\dll\Win64\ProfitDLL.dll")
@@ -268,7 +270,7 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
         
     ))
 
-    subcontas_permitidas = {"133","142","144","145","147","153","156","157"}
+    subcontas_permitidas = {"613","591"}
     #subcontas_permitidas = {"6", "85", "90", "117", "121", "122", "124", "125", "126", "128", "129", "132", "133", "136", "137", "140", "142", "144", "145", "147", "148", "150", "152", "153", "155"}
     tz_brasilia = ZoneInfo("America/Sao_Paulo")
     dt_raw = system_time_to_datetime(order.CloseDate)
@@ -292,8 +294,8 @@ def printOrder(title: str, orderId: TConnectorOrderIdentifier, log_file: str = N
                     print(f"🚀 Enviando COMPRA de {(order.TradedQuantity * multiplicador)}")
                     sendBuyMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * multiplicador))
                 elif order.OrderSide == 1:
-                    print(f"🚀 Enviando VENDA de {(order.TradedQuantity * 2)}")
-                    sendSellMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * 2))
+                    print(f"🚀 Enviando VENDA de {(order.TradedQuantity * multiplicador)}")
+                    sendSellMarketOrder(order.AssetID.Ticker.strip(), (order.TradedQuantity * multiplicador))
     print(" ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ")
 
     kafka_received_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
@@ -658,7 +660,7 @@ def doZeroPosition():
     
     print("ZeroOrderID: {0}".format(ret))
 
-def dllStart(key="14718386451779203944", user="18638492000100", password="EuroDLL@2025"):
+def dllStart(key="14718386451779203944", user="18638492000100", password=senha_login):
     try:
         #key = input("Chave de acesso: ")
         #user = input("Usuário: ") # preencher com usuário da conta (email ou documento)
@@ -781,7 +783,7 @@ def sendBuyMarketOrder(ticker, quantity):
     
     key = "14718386451779203944"
     user = "18638492000100"
-    password ="EuroDLL@2025"
+    password =senha_login
 
     #profit_dll.DLLInitializeLogin(c_wchar_p(key), c_wchar_p(user), c_wchar_p(password), stateCallback, None, None, accountCallback,
     #                                          newTradeCallback, newDailyCallback, priceBookCallback,
@@ -793,10 +795,10 @@ def sendBuyMarketOrder(ticker, quantity):
 
     print(" ===[ENVIO ORDEM]=== ")
 
-    brokerId = 513
+    brokerId = 15005
     accountId = "102383173"
     subAccountId = "9"
-    rotPassword = "EuroDLL@2025"
+    rotPassword = senha_envio
     #Mic@123456 Mic@123456
 
     ticker = ticker
@@ -843,10 +845,10 @@ def sendSellMarketOrder(ticker, quantity):
     #profit_dll.DLLInitializeMarketLogin(c_wchar_p(key), c_wchar_p(user), c_wchar_p(password), stateCallback, newTradeCallback, newDailyCallback, priceBookCallback,
     #                                             None, newHistoryCallback, progressCallBack, newTinyBookCallBack)
 
-    brokerId = 513
+    brokerId = 15005
     accountId = "102383173"
     #subAccountId = "9"
-    rotPassword = "EuroDLL@2025"
+    rotPassword = senha_envio
 
     ticker = ticker
     exchange = "F"
