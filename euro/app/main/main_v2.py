@@ -9,6 +9,7 @@ from profitTypes import *
 from profit_dll import initializeDll
 #from f_compra_venda import sendBuyMarketOrder
 import json
+
 from zoneinfo import ZoneInfo
 
 multiplicador = 4
