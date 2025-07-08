@@ -13,8 +13,9 @@ from zoneinfo import ZoneInfo
 
 multiplicador = 1
 
-profit_dll = initializeDll(r"C:\headsystem\head-system\euro\app\dll\Win64\ProfitDLL.dll")
-
+#profit_dll = initializeDll(r"C:\headsystem\head-system\euro\app\dll\Win64\ProfitDLL.dll")
+profit_dll = initializeDll(r"C:\head-system\euro\app\dll\Win64\ProfitDLL.dll")
+                              
 # Error Codes
 NL_OK                    = 0x00000000
 NL_INTERNAL_ERROR        = -2147483647                   # Internal error
