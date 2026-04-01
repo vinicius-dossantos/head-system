@@ -15,6 +15,8 @@ from sklearn.impute import SimpleImputer
 
 
 CATEGORICAL_FEATURES = ["airline", "origin", "destination"]
+# Minimum fraction of successfully coerced values for a column to be treated as numeric
+NUMERIC_COERCION_THRESHOLD = 0.5
 NUMERICAL_FEATURES = [
     "departure_hour",
     "day_of_week",
@@ -46,7 +48,7 @@ def handle_missing_values(df: pd.DataFrame) -> pd.DataFrame:
         if df[col].isna().any():
             # Attempt numeric coercion first to handle object columns storing floats
             coerced = pd.to_numeric(df[col], errors="coerce")
-            if coerced.notna().sum() > df[col].count() * 0.5:
+            if coerced.notna().sum() > df[col].count() * NUMERIC_COERCION_THRESHOLD:
                 # Column is predominantly numeric — fill with median
                 df[col] = coerced.fillna(coerced.median())
             else:
