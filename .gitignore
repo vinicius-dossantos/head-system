@@ -1,3 +1,15 @@
+# Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Generated data files
+voos/data/*.csv
+
 *.tfstate
 *.tfstate.*
 **/.terraform/
