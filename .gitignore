@@ -21,3 +21,14 @@ Thumbs.db
 *.dat*
 *.accesd*
 *broker*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*_executed.ipynb
