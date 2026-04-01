@@ -44,8 +44,14 @@ def handle_missing_values(df: pd.DataFrame) -> pd.DataFrame:
 
     for col in cat_cols:
         if df[col].isna().any():
-            mode_val = df[col].mode()[0]
-            df[col] = df[col].fillna(mode_val)
+            # Attempt numeric coercion first to handle object columns storing floats
+            coerced = pd.to_numeric(df[col], errors="coerce")
+            if coerced.notna().sum() > df[col].count() * 0.5:
+                # Column is predominantly numeric — fill with median
+                df[col] = coerced.fillna(coerced.median())
+            else:
+                mode_val = df[col].mode()[0]
+                df[col] = df[col].fillna(mode_val)
 
     return df
 
